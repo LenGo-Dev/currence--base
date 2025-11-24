@@ -8,16 +8,32 @@ import styles from './ResultBox.module.scss';
 const ResultBox = ({ from, to, amount }) => {
 
   const convertedAmount = useMemo(() => {
+
+    if (amount >= 0) {
     if(from === 'USD' && to === 'PLN') return convertUSDToPLN(amount);
     if(from === 'PLN' && to === 'USD') return convertPLNToUSD(amount);
+
     return formatAmountInCurrency(amount, from);
+    }
+
+    return `Wrong value: ${amount}`;
   }, [from, to, amount]);
+
 
   const formattedAmount = useMemo(() => formatAmountInCurrency(amount, from), [amount, from]);
 
+  let content;
+
+  if (amount < 0) {
+    content = convertedAmount;
+  } else {
+    content = `${formattedAmount} = ${convertedAmount}`;
+  }
+
   return (
-    <div className={styles.result}>
-      {formattedAmount} = {convertedAmount}
+    <div data-testid="result" className={styles.result}>
+      {/*{formattedAmount} = {convertedAmount}*/}
+      {content}
     </div>
   );
 };
